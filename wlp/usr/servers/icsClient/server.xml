@@ -1,0 +1,48 @@
+<server description="Sample DynaCache Configuration for XSLD">
+
+	<featureManager>
+		<feature>jsp-2.2</feature>
+		<feature>webCache-1.0</feature>
+		<feature>elasticCacheClient-1.0</feature>
+	</featureManager>
+
+	<!--
+	Access sample application using: http://<hostname>:9080
+	-->
+
+	<httpEndpoint id="defaultHttpEndpoint"
+		host="*"
+		httpPort="9080"
+		httpsPort="9443" />
+
+	<elasticCacheClient id="client1" elasticCacheCatalogClusterRef="ep1" elasticCacheClientSecurityRef="securitySettings"/>
+	<elasticCacheCatalogCluster id="ep1">
+			<!-- ************************************************************** -->
+			<!-- Specify the list of catalog server endpoint here               -->
+			<!-- Each server element should corresponding to one catalog server -->
+			<!-- ************************************************************** -->
+			<server host="169.46.22.168" port="4809" />
+	</elasticCacheCatalogCluster>
+
+	<!-- ************************************************************** -->
+	<!-- Specify the username and password here                         -->
+	<!-- ************************************************************** -->
+	<elasticCacheClientSecurity id="securitySettings"
+								enabled="true"
+								transportType="TCP/IP"
+								credentialGeneratorClass="com.ibm.websphere.objectgrid.security.plugins.builtins.UserPasswordCredentialGenerator"
+								credentialGeneratorProps="xsadmin xsadmin4Me!"/>
+
+	<distributedMap id="cache1" jndiName="cache1" cacheProviderName="WebSphere eXtreme Scale" >
+		<!-- ************************************************************** -->
+		<!-- Update gridName attribute with the dynacache gridname          -->
+		<!-- ************************************************************** -->
+		<elasticCacheProvider gridName="DYNACACHE_REMOTE" elasticCacheClientRef="client1" />
+	</distributedMap>
+
+	<webApplication contextRoot="/" location="DynacacheSample.war" />
+
+	<logging traceSpecification="com.ibm.ws.cache.*=all:com.ibm.wsspi.cache.*=all:com.ibm.ws.objectgrid.dynacache=all"
+		maxFileSize="200" maxFiles="10" />
+
+</server>
